@@ -314,12 +314,15 @@
 
     <script>
         // 配置信息 - 需要修改为您的 GitHub 用户名和仓库名
-        const config = {
-            owner: 'k-0-i', // 修改为您的 GitHub 用户名
-            repo: 'html',  // 修改为您的仓库名
-            branch: 'main',         // 默认分支，通常是 main 或 master
-            basePath: ''            // 如果您的文件不在根目录，可以设置一个基础路径
-        };
+// 修改配置对象
+const config = {
+    owner: 'k-0-i', // 修改为您的 GitHub 用户名
+    repo: 'html',  // 修改为您的仓库名
+    branch: 'main',         // 默认分支，通常是 main 或 master
+    basePath: '',           // 如果您的文件不在根目录，可以设置一个基础路径
+    ignoredFiles: ['CNAME', 'index.html', '.gitignore', 'README.md'] // 要忽略的文件列表
+};
+
 
         // 当前路径状态
         let currentPath = '';
@@ -380,38 +383,49 @@
         }
 
         // 显示文件列表
-        function displayFiles(files, path) {
-            const fileExplorer = document.getElementById('fileExplorer');
-            fileExplorer.innerHTML = '';
+// 在 displayFiles 函数中添加文件过滤逻辑
+function displayFiles(files, path) {
+    const fileExplorer = document.getElementById('fileExplorer');
+    fileExplorer.innerHTML = '';
 
-            // 按类型分组：文件夹优先
-            const folders = files.filter(file => file.type === 'dir');
-            const fileItems = files.filter(file => file.type === 'file');
+    // 要忽略的文件列表
+    const ignoredFiles = ['CNAME', 'index.html'];
+    
+    // 过滤掉要忽略的文件
+    //files = files.filter(file => !ignoredFiles.includes(file.name));
+// 过滤掉要忽略的文件
+files = files.filter(file => !config.ignoredFiles.includes(file.name));
 
-            // 按名称排序
-            folders.sort((a, b) => a.name.localeCompare(b.name));
-            fileItems.sort((a, b) => a.name.localeCompare(b.name));
 
-            // 合并排序后的列表
-            const sortedFiles = [...folders, ...fileItems];
+    // 按类型分组：文件夹优先
+    const folders = files.filter(file => file.type === 'dir');
+    const fileItems = files.filter(file => file.type === 'file');
 
-            if (sortedFiles.length === 0) {
-                fileExplorer.innerHTML = '<p>此目录为空</p>';
-                return;
-            }
+    // 按名称排序
+    folders.sort((a, b) => a.name.localeCompare(b.name));
+    fileItems.sort((a, b) => a.name.localeCompare(b.name));
 
-            // 创建文件列表
-            const fileList = document.createElement('ul');
-            fileList.className = 'file-list';
+    // 合并排序后的列表
+    const sortedFiles = [...folders, ...fileItems];
 
-            // 添加文件项
-            sortedFiles.forEach(file => {
-                const fileItem = createFileItem(file, path);
-                fileList.appendChild(fileItem);
-            });
+    if (sortedFiles.length === 0) {
+        fileExplorer.innerHTML = '<p>此目录为空</p>';
+        return;
+    }
 
-            fileExplorer.appendChild(fileList);
-        }
+    // 创建文件列表
+    const fileList = document.createElement('ul');
+    fileList.className = 'file-list';
+
+    // 添加文件项
+    sortedFiles.forEach(file => {
+        const fileItem = createFileItem(file, path);
+        fileList.appendChild(fileItem);
+    });
+
+    fileExplorer.appendChild(fileList);
+}
+
 
         // 创建单个文件项
         function createFileItem(file, currentPath) {

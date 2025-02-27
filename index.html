@@ -1,2 +1,710 @@
-# html
-some frontend tools
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Pages 文件索引</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --text-color: #333;
+            --light-bg: #f8f9fa;
+            --border-color: #dee2e6;
+            --hover-color: #e9ecef;
+            --folder-color: #ffc107;
+            --header-color: #343a40;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--header-color);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            margin-top: 10px;
+            opacity: 0.8;
+            font-size: 1rem;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .file-list {
+            list-style: none;
+        }
+
+        .file-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item:hover {
+            background-color: var(--hover-color);
+        }
+
+        .file-item .icon {
+            margin-right: 12px;
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .file-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        .file-info {
+            margin-left: auto;
+            color: #6c757d;
+            font-size: 0.9em;
+            text-align: right;
+        }
+
+        .date {
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: var(--light-bg);
+            border-top: 1px solid var(--border-color);
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .search-container {
+            padding: 0 15px 15px 15px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 8px;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .tag-folder {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .tag-html {
+            background-color: #7952b3;
+            color: white;
+        }
+
+        .tag-css {
+            background-color: #0dcaf0;
+            color: white;
+        }
+
+        .tag-js {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .tag-image {
+            background-color: #20c997;
+            color: white;
+        }
+
+        .tag-doc {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .tag-other {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .folder-name {
+            font-weight: 500;
+            color: var(--secondary-color);
+        }
+
+        .breadcrumb {
+            display: flex;
+            padding: 15px;
+            list-style: none;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: "/";
+            padding: 0 8px;
+            color: #6c757d;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        .file-description {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+
+        #loadingIndicator {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .path-input {
+            display: flex;
+            padding: 0 15px 15px 15px;
+        }
+
+        .path-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+
+        .path-input button {
+            padding: 10px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .path-input button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .file-info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GitHub Pages 文件索引</h1>
+            <p>浏览并访问本项目中的文件</p>
+        </header>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="搜索文件...">
+        </div>
+
+        <div class="path-input">
+            <input type="text" id="pathInput" placeholder="输入路径 (例如: docs, images/icons)">
+            <button id="goButton">转到</button>
+        </div>
+
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" id="breadcrumb">
+                <li class="breadcrumb-item"><a href="#" data-path="">根目录</a></li>
+            </ol>
+        </nav>
+
+        <div class="content">
+            <div id="loadingIndicator">加载中...</div>
+            <div id="fileExplorer"></div>
+        </div>
+
+        <footer>
+            <p>© <span id="currentYear"></span> GitHub Pages 索引 | 使用 GitHub API 自动生成</p>
+        </footer>
+    </div>
+
+    <script>
+        // 配置信息 - 需要修改为您的 GitHub 用户名和仓库名
+        const config = {
+            owner: 'k-0-i', // 修改为您的 GitHub 用户名
+            repo: 'html',  // 修改为您的仓库名
+            branch: 'main',         // 默认分支，通常是 main 或 master
+            basePath: ''            // 如果您的文件不在根目录，可以设置一个基础路径
+        };
+
+        // 当前路径状态
+        let currentPath = '';
+        let breadcrumbPath = [];
+
+        // 设置当前年份
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // 页面加载完成后获取文件列表
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchFileList(currentPath);
+            setupEventListeners();
+        });
+
+        // 设置事件监听器
+        function setupEventListeners() {
+            // 搜索功能
+            document.getElementById('searchInput').addEventListener('input', filterFiles);
+
+            // 路径导航
+            document.getElementById('goButton').addEventListener('click', () => {
+                const path = document.getElementById('pathInput').value.trim();
+                navigateToPath(path);
+            });
+
+            document.getElementById('pathInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const path = document.getElementById('pathInput').value.trim();
+                    navigateToPath(path);
+                }
+            });
+        }
+
+        // 通过 GitHub API 获取文件列表
+        async function fetchFileList(path) {
+            showLoading(true);
+            
+            try {
+                // 构建 API URL
+                const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}?ref=${config.branch}`;
+                
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API 错误: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                displayFiles(data, path);
+                updateBreadcrumb(path);
+                document.getElementById('pathInput').value = path;
+                
+            } catch (error) {
+                showError(`获取文件列表失败: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 显示文件列表
+        function displayFiles(files, path) {
+            const fileExplorer = document.getElementById('fileExplorer');
+            fileExplorer.innerHTML = '';
+
+            // 按类型分组：文件夹优先
+            const folders = files.filter(file => file.type === 'dir');
+            const fileItems = files.filter(file => file.type === 'file');
+
+            // 按名称排序
+            folders.sort((a, b) => a.name.localeCompare(b.name));
+            fileItems.sort((a, b) => a.name.localeCompare(b.name));
+
+            // 合并排序后的列表
+            const sortedFiles = [...folders, ...fileItems];
+
+            if (sortedFiles.length === 0) {
+                fileExplorer.innerHTML = '<p>此目录为空</p>';
+                return;
+            }
+
+            // 创建文件列表
+            const fileList = document.createElement('ul');
+            fileList.className = 'file-list';
+
+            // 添加文件项
+            sortedFiles.forEach(file => {
+                const fileItem = createFileItem(file, path);
+                fileList.appendChild(fileItem);
+            });
+
+            fileExplorer.appendChild(fileList);
+        }
+
+        // 创建单个文件项
+        function createFileItem(file, currentPath) {
+            const fileItem = document.createElement('li');
+            fileItem.className = 'file-item';
+
+            const isDirectory = file.type === 'dir';
+            const extension = file.name.split('.').pop().toLowerCase();
+            
+            // 设置文件图标和标签
+            const { iconPath, iconColor, fileType, tagClass } = getFileTypeInfo(file.name, isDirectory);
+
+            // 构建文件路径
+            const filePath = currentPath ? `${currentPath}/${file.name}` : file.name;
+            
+            // 创建文件项 HTML
+            const link = document.createElement('a');
+            if (isDirectory) {
+                link.href = '#';
+                link.setAttribute('data-path', filePath);
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navigateToPath(filePath);
+                });
+            } else {
+                // 文件链接直接指向 GitHub Pages 上的文件
+                link.href = filePath;
+                link.target = '_blank';
+            }
+
+            // 添加图标
+            const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            icon.setAttribute('class', 'icon');
+            icon.setAttribute('viewBox', '0 0 24 24');
+            icon.setAttribute('fill', iconColor);
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', iconPath);
+            icon.appendChild(path);
+            
+            link.appendChild(icon);
+            
+            // 添加文件名
+            link.appendChild(document.createTextNode(file.name));
+            
+            // 添加标签
+            const tag = document.createElement('span');
+            tag.className = `tag ${tagClass}`;
+            tag.textContent = fileType;
+            link.appendChild(tag);
+            
+            fileItem.appendChild(link);
+
+            // 添加文件信息
+            const fileInfo = document.createElement('div');
+            fileInfo.className = 'file-info';
+            
+            const fileDesc = document.createElement('div');
+            fileDesc.textContent = isDirectory ? '文件夹' : formatFileSize(file.size);
+            fileInfo.appendChild(fileDesc);
+            
+            // 格式化日期 - GitHub API 不直接提供文件修改日期，所以这里用占位符
+            const fileDate = document.createElement('div');
+            fileDate.className = 'date';
+            fileDate.textContent = '---';
+            fileInfo.appendChild(fileDate);
+            
+            fileItem.appendChild(fileInfo);
+
+            return fileItem;
+        }
+
+        // 根据文件类型获取图标和标签信息
+        function getFileTypeInfo(fileName, isDirectory) {
+            if (isDirectory) {
+                return {
+                    iconPath: 'M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z',
+                    iconColor: '#ffc107',
+                    fileType: '文件夹',
+                    tagClass: 'tag-folder'
+                };
+            }
+
+            const extension = fileName.split('.').pop().toLowerCase();
+            
+            // 定义不同类型的文件图标和颜色
+            const fileTypes = {
+                // HTML 文件
+                'html': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M14.5,9V4l5,5H14.5z M12,10.5L5.5,17L7,18.5 L12,13.5l5,5l1.5-1.5L12,10.5z',
+                    iconColor: '#7952b3',
+                    fileType: 'HTML',
+                    tagClass: 'tag-html'
+                },
+                'htm': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M14.5,9V4l5,5H14.5z M12,10.5L5.5,17L7,18.5 L12,13.5l5,5l1.5-1.5L12,10.5z',
+                    iconColor: '#7952b3',
+                    fileType: 'HTML',
+                    tagClass: 'tag-html'
+                },
+                
+                // CSS 文件
+                'css': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M14.5,9V4l5,5H14.5z M12,18.5L8,14.5l1.5-1.5 L12,15.5l5-5l1.5,1.5L12,18.5z',
+                    iconColor: '#0dcaf0',
+                    fileType: 'CSS',
+                    tagClass: 'tag-css'
+                },
+                
+                // JavaScript 文件
+                'js': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M14.5,9V4l5,5H14.5z M12,18.5L8,14.5l1.5-1.5 L12,15.5l5-5l1.5,1.5L12,18.5z',
+                    iconColor: '#ffc107',
+                    fileType: 'JS',
+                    tagClass: 'tag-js'
+                },
+                
+                // 图片文件
+                'jpg': {
+                    iconPath: 'M21,5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5z M8.5,13.5l2.5,3l3.5-4.5l4.5,6 H5L8.5,13.5z',
+                    iconColor: '#20c997',
+                    fileType: 'JPG',
+                    tagClass: 'tag-image'
+                },
+                'jpeg': {
+                    iconPath: 'M21,5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5z M8.5,13.5l2.5,3l3.5-4.5l4.5,6 H5L8.5,13.5z',
+                    iconColor: '#20c997',
+                    fileType: 'JPG',
+                    tagClass: 'tag-image'
+                },
+                'png': {
+                    iconPath: 'M21,5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5z M8.5,13.5l2.5,3l3.5-4.5l4.5,6 H5L8.5,13.5z',
+                    iconColor: '#20c997',
+                    fileType: 'PNG',
+                    tagClass: 'tag-image'
+                },
+                'gif': {
+                    iconPath: 'M21,5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5z M8.5,13.5l2.5,3l3.5-4.5l4.5,6 H5L8.5,13.5z',
+                    iconColor: '#20c997',
+                    fileType: 'GIF',
+                    tagClass: 'tag-image'
+                },
+                'svg': {
+                    iconPath: 'M21,5c0-1.1-0.9-2-2-2H5C3.9,3,3,3.9,3,5v14c0,1.1,0.9,2,2,2h14c1.1,0,2-0.9,2-2V5z M8.5,13.5l2.5,3l3.5-4.5l4.5,6 H5L8.5,13.5z',
+                    iconColor: '#20c997',
+                    fileType: 'SVG',
+                    tagClass: 'tag-image'
+                },
+                
+                // 文档文件
+                'pdf': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z',
+                    iconColor: '#dc3545',
+                    fileType: 'PDF',
+                    tagClass: 'tag-doc'
+                },
+                'doc': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z',
+                    iconColor: '#0d6efd',
+                    fileType: 'DOC',
+                    tagClass: 'tag-doc'
+                },
+                'docx': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z',
+                    iconColor: '#0d6efd',
+                    fileType: 'DOCX',
+                    tagClass: 'tag-doc'
+                },
+                'md': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z',
+                    iconColor: '#0d6efd',
+                    fileType: 'MD',
+                    tagClass: 'tag-doc'
+                },
+                'txt': {
+                    iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M16,18H8v-2h8V18z M16,14H8v-2h8V14z M13,9V3.5 L18.5,9H13z',
+                    iconColor: '#6c757d',
+                    fileType: 'TXT',
+                    tagClass: 'tag-doc'
+                }
+            };
+            
+            // 返回相应的文件类型信息，如果没有匹配则使用默认值
+            return fileTypes[extension] || {
+                iconPath: 'M14,2H6C4.9,2,4,2.9,4,4v16c0,1.1,0.9,2,2,2h12c1.1,0,2-0.9,2-2V8L14,2z M13,9V3.5L18.5,9H13z',
+                iconColor: '#6c757d',
+                fileType: extension.toUpperCase() || 'FILE',
+                tagClass: 'tag-other'
+            };
+        }
+
+        // 格式化文件大小
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // 导航到指定路径
+        function navigateToPath(path) {
+            // 移除路径开头的斜杠
+            path = path.replace(/^\/+/, '');
+            currentPath = path;
+            fetchFileList(path);
+        }
+
+        // 更新面包屑导航
+        function updateBreadcrumb(path) {
+            const breadcrumb = document.getElementById('breadcrumb');
+            breadcrumb.innerHTML = '';
+            
+            // 添加根目录
+            const rootItem = document.createElement('li');
+            rootItem.className = 'breadcrumb-item';
+            const rootLink = document.createElement('a');
+            rootLink.href = '#';
+            rootLink.setAttribute('data-path', '');
+            rootLink.textContent = '根目录';
+            rootLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToPath('');
+            });
+            rootItem.appendChild(rootLink);
+            breadcrumb.appendChild(rootItem);
+            
+            // 如果当前路径不是根目录，则添加路径组件
+            if (path) {
+                const pathParts = path.split('/');
+                let currentPath = '';
+                
+                pathParts.forEach((part, index) => {
+                    currentPath += (index > 0 ? '/' : '') + part;
+                    
+                    const item = document.createElement('li');
+                    item.className = 'breadcrumb-item';
+                    
+                    if (index === pathParts.length - 1) {
+                        // 最后一项（当前目录）
+                        item.classList.add('active');
+                        item.textContent = part;
+                    } else {
+                        // 中间路径
+                        const link = document.createElement('a');
+                        link.href = '#';
+                        link.setAttribute('data-path', currentPath);
+                        link.textContent = part;
+                        link.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            navigateToPath(currentPath);
+                        });
+                        item.appendChild(link);
+                    }
+                    
+                    breadcrumb.appendChild(item);
+                });
+            }
+        }
+
+        // 搜索过滤文件
+        function filterFiles() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const fileItems = document.querySelectorAll('.file-item');
+            
+            fileItems.forEach(item => {
+                const fileName = item.querySelector('a').textContent.toLowerCase();
+                
+                if (fileName.includes(searchTerm)) {
+                    item.style.display = '';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // 显示/隐藏加载提示
+        function showLoading(isLoading) {
+            document.getElementById('loadingIndicator').style.display = isLoading ? 'block' : 'none';
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            errorElement.textContent = message;
+            
+            const fileExplorer = document.getElementById('fileExplorer');
+            fileExplorer.innerHTML = '';
+            fileExplorer.appendChild(errorElement);
+        }
+    </script>
+</body>
+</html>

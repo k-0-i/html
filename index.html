@@ -421,8 +421,8 @@
                 min-height: calc(100vh - 30px);
             }
         }
-                /* 添加设置面板样式 */
-                .settings-panel {
+        /* 添加设置面板样式 */
+        .settings-panel {
             position: fixed;
             top: 0;
             right: -350px;
@@ -566,6 +566,435 @@
             color: #6c757d;
             margin-top: 4px;
         }
+        
+        .settings-form .section-title {
+            font-weight: bold;
+            padding: 10px 0;
+            margin-top: 15px;
+            border-top: 1px solid var(--border-color);
+            color: var(--header-color);
+        }
+        
+        .checkbox-group {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 1200px;
+            background-color: white;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--header-color);
+            color: white;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        header p {
+            margin-top: 10px;
+            opacity: 0.8;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+        }
+
+        .controls {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container {
+            margin-bottom: 15px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.25);
+            outline: none;
+        }
+
+        .path-input {
+            display: flex;
+        }
+
+        .path-input input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .path-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.25);
+            outline: none;
+        }
+
+        .path-input button {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+
+        .path-input button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .breadcrumb {
+            display: flex;
+            padding: 12px 15px;
+            list-style: none;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: "/";
+            padding: 0 8px;
+            color: #6c757d;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+
+        .content {
+            flex: 1;
+            padding: 0 15px 20px 15px;
+            overflow-y: auto;
+        }
+
+        #loadingIndicator {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        #loadingIndicator::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid rgba(74, 111, 165, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .file-list {
+            list-style: none;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item:hover {
+            background-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+
+        .file-item .icon {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .file-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        .file-info {
+            margin-left: auto;
+            color: #6c757d;
+            font-size: 0.9em;
+            text-align: right;
+            min-width: 100px;
+        }
+
+        .date {
+            font-size: 0.8em;
+            margin-top: 3px;
+            color: #adb5bd;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            margin-left: 10px;
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-folder {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-html {
+            background-color: #f0e7f9;
+            color: #7952b3;
+        }
+
+        .tag-css {
+            background-color: #e3f6fd;
+            color: #0dcaf0;
+        }
+
+        .tag-js {
+            background-color: #fff3cd;
+            color: #997404;
+        }
+
+        .tag-image {
+            background-color: #d8f3eb;
+            color: #20c997;
+        }
+
+        .tag-doc {
+            background-color: #e6f2ff;
+            color: #0d6efd;
+        }
+
+        .tag-other {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        footer {
+            background-color: var(--header-color);
+            color: white;
+            text-align: center;
+            padding: 15px 20px;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .file-info {
+                display: none;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            header p {
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .file-item {
+                padding: 12px 10px;
+            }
+            
+            .tag {
+                font-size: 0.7em;
+                padding: 3px 6px;
+            }
+            
+            .settings-panel {
+                width: 85%;
+                right: -85%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .breadcrumb {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+            
+            .file-item .icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+            
+            .path-input button {
+                padding: 12px 15px;
+            }
+            
+            .controls {
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                border-radius: 8px;
+                margin: 15px auto;
+                min-height: calc(100vh - 30px);
+            }
+        }
     </style>
 </head>
 <body>
@@ -616,42 +1045,56 @@
     </svg>
 </button>
 
-<!-- 设置面板 -->
-<div class="settings-overlay" id="settingsOverlay"></div>
-<div class="settings-panel" id="settingsPanel">
-    <div class="settings-header">
-        <h3>GitHub 配置设置</h3>
-        <button class="close-settings" id="closeSettings">&times;</button>
-    </div>
-    <form class="settings-form" id="settingsForm">
-        <div class="form-group">
-            <label for="owner">GitHub 用户名</label>
-            <input type="text" id="owner" name="owner" placeholder="例如: username">
-            <p class="help-text">您要访问的仓库所有者的用户名</p>
-        </div>
-        <div class="form-group">
-            <label for="repo">仓库名称</label>
-            <input type="text" id="repo" name="repo" placeholder="例如: repo-name">
-            <p class="help-text">要索引的仓库名称</p>
-        </div>
-        <div class="form-group">
-            <label for="branch">分支名称</label>
-            <input type="text" id="branch" name="branch" placeholder="例如: main 或 master">
-            <p class="help-text">仓库的默认分支，通常是 main 或 master</p>
-        </div>
-        <div class="form-group">
-            <label for="basePath">基础路径 (可选)</label>
-            <input type="text" id="basePath" name="basePath" placeholder="例如: docs">
-            <p class="help-text">如果您的文件不在根目录，可以设置一个基础路径</p>
-        </div>
-        <div class="form-group">
-            <label for="ignoredFiles">忽略的文件 (每行一个)</label>
-            <textarea class="ignored-files" id="ignoredFiles" name="ignoredFiles" placeholder="例如:&#10;CNAME&#10;index.html&#10;.gitignore"></textarea>
-            <p class="help-text">这些文件将不会显示在列表中</p>
-        </div>
-        <button type="submit">保存设置</button>
-    </form>
-</div>
+   <!-- 设置面板 -->
+   <div class="settings-overlay" id="settingsOverlay"></div>
+   <div class="settings-panel" id="settingsPanel">
+       <div class="settings-header">
+           <h3>GitHub 配置设置</h3>
+           <button class="close-settings" id="closeSettings">&times;</button>
+       </div>
+       <form class="settings-form" id="settingsForm">
+           <div class="section-title">自定义域名设置</div>
+           <div class="form-group">
+               <label for="customDomain">自定义域名</label>
+               <input type="text" id="customDomain" name="customDomain" placeholder="例如: b.jzcheng.cn">
+               <p class="help-text">设置要访问的GitHub Pages的自定义域名</p>
+           </div>
+           <div class="checkbox-group">
+               <input type="checkbox" id="useCustomDomain" name="useCustomDomain"> 
+               <label for="useCustomDomain">使用自定义域名（而不是GitHub API）</label>
+           </div>
+           
+           <div class="section-title">GitHub 仓库设置</div>
+           <div class="form-group">
+               <label for="owner">GitHub 用户名</label>
+               <input type="text" id="owner" name="owner" placeholder="例如: username">
+               <p class="help-text">您要访问的仓库所有者的用户名</p>
+           </div>
+           <div class="form-group">
+               <label for="repo">仓库名称</label>
+               <input type="text" id="repo" name="repo" placeholder="例如: repo-name">
+               <p class="help-text">要索引的仓库名称</p>
+           </div>
+           <div class="form-group">
+               <label for="branch">分支名称</label>
+               <input type="text" id="branch" name="branch" placeholder="例如: main 或 master">
+               <p class="help-text">仓库的默认分支，通常是 main 或 master</p>
+           </div>
+           <div class="form-group">
+               <label for="basePath">基础路径 (可选)</label>
+               <input type="text" id="basePath" name="basePath" placeholder="例如: docs">
+               <p class="help-text">如果您的文件不在根目录，可以设置一个基础路径</p>
+           </div>
+           
+           <div class="section-title">显示设置</div>
+           <div class="form-group">
+               <label for="ignoredFiles">忽略的文件 (每行一个)</label>
+               <textarea class="ignored-files" id="ignoredFiles" name="ignoredFiles" placeholder="例如:&#10;CNAME&#10;index.html&#10;.gitignore"></textarea>
+               <p class="help-text">这些文件将不会显示在列表中</p>
+           </div>
+           <button type="submit">保存设置</button>
+       </form>
+   </div>
 
     <script>
         // 配置信息 - 需要修改为您的 GitHub 用户名和仓库名
@@ -660,7 +1103,9 @@
             repo: 'html',  // 修改为您的仓库名
             branch: 'main',         // 默认分支，通常是 main 或 master
             basePath: '',           // 如果您的文件不在根目录，可以设置一个基础路径
-            ignoredFiles: ['CNAME', 'index.html', '.gitignore', 'README.md'] // 要忽略的文件列表
+            ignoredFiles: ['CNAME', 'index.html', '.gitignore', 'README.md'], // 要忽略的文件列表
+            customDomain: '',       // 自定义域名
+            useCustomDomain: false  // 是否使用自定义域名
         };
 
         // 当前路径状态
@@ -669,7 +1114,7 @@
 
         // 设置当前年份
         document.getElementById('currentYear').textContent = new Date().getFullYear();
-
+  
         // 页面加载完成后获取文件列表
         document.addEventListener('DOMContentLoaded', () => {
             // 从本地存储加载配置
@@ -710,6 +1155,8 @@
             document.getElementById('repo').value = config.repo || '';
             document.getElementById('branch').value = config.branch || 'main';
             document.getElementById('basePath').value = config.basePath || '';
+            document.getElementById('customDomain').value = config.customDomain || '';
+            document.getElementById('useCustomDomain').checked = config.useCustomDomain || false;
             document.getElementById('ignoredFiles').value = Array.isArray(config.ignoredFiles) 
                 ? config.ignoredFiles.join('\n') 
                 : '';
@@ -723,6 +1170,8 @@
                 config.repo = document.getElementById('repo').value.trim();
                 config.branch = document.getElementById('branch').value.trim() || 'main';
                 config.basePath = document.getElementById('basePath').value.trim();
+                config.customDomain = document.getElementById('customDomain').value.trim();
+                config.useCustomDomain = document.getElementById('useCustomDomain').checked;
                 
                 // 处理忽略的文件列表
                 const ignoredFilesText = document.getElementById('ignoredFiles').value;
@@ -740,8 +1189,28 @@
                 // 重新加载文件列表
                 currentPath = '';
                 fetchFileList(currentPath);
+                
+                // 更新页面标题
+                updatePageTitle();
             });
         }
+
+        // 更新页面标题
+        function updatePageTitle() {
+            const domain = config.useCustomDomain && config.customDomain ? 
+                config.customDomain : 
+                `${config.owner}/${config.repo}`;
+            document.title = `${domain} - 文件索引`;
+            
+            // 更新页面标题
+            const headerTitle = document.querySelector('.header-content h1');
+            if (headerTitle) {
+                headerTitle.textContent = config.useCustomDomain && config.customDomain ? 
+                    `${config.customDomain} 文件索引` : 
+                    'GitHub Pages 文件索引';
+            }
+        }
+
         // 设置面板的显示/隐藏
         function toggleSettingsPanel(show) {
             const panel = document.getElementById('settingsPanel');
@@ -792,6 +1261,15 @@
             document.getElementById('settingsOverlay').addEventListener('click', () => {
                 toggleSettingsPanel(false);
             });
+            // 自定义域名切换事件
+            document.getElementById('useCustomDomain').addEventListener('change', function(e) {
+                const customDomainField = document.getElementById('customDomain');
+                if (e.target.checked) {
+                    customDomainField.setAttribute('required', 'required');
+                } else {
+                    customDomainField.removeAttribute('required');
+                }
+            });
         }
 
 
@@ -800,24 +1278,73 @@
             showLoading(true);
             
             try {
-                // 构建 API URL
-                const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${path}?ref=${config.branch}`;
+                let data;
                 
-                const response = await fetch(apiUrl);
-                
-                if (!response.ok) {
-                    throw new Error(`GitHub API 错误: ${response.status}`);
+                if (config.useCustomDomain && config.customDomain) {
+                    // 使用自定义域名访问文件
+                    data = await fetchFileListFromCustomDomain(path);
+                } else {
+                    // 使用 GitHub API 访问
+                    data = await fetchFileListFromGitHubAPI(path);
                 }
                 
-                const data = await response.json();
                 displayFiles(data, path);
                 updateBreadcrumb(path);
                 document.getElementById('pathInput').value = path;
+                updatePageTitle();
                 
             } catch (error) {
                 showError(`获取文件列表失败: ${error.message}`);
             } finally {
                 showLoading(false);
+            }
+        }
+
+        // 从GitHub API获取文件列表
+        async function fetchFileListFromGitHubAPI(path) {
+            // 构建 API URL
+            let apiPath = path;
+            if (config.basePath) {
+                apiPath = config.basePath + (path ? '/' + path : '');
+            }
+            
+            const apiUrl = `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${apiPath}?ref=${config.branch}`;
+            
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                throw new Error(`GitHub API 错误: ${response.status}`);
+            }
+            
+            return await response.json();
+        }
+
+        // 从自定义域名获取文件列表
+        async function fetchFileListFromCustomDomain(path) {
+            // 构建文件列表请求URL
+            // 注意：这需要在自定义域名上设置一个特殊的API端点来返回目录内容
+            // 这里假设自定义域名的根目录有一个api.json文件，返回目录结构
+            
+            let apiPath = path ? path + '/' : '';
+            if (config.basePath) {
+                apiPath = config.basePath + '/' + apiPath;
+            }
+            
+            // 直接请求当前目录的api.json
+            const domainUrl = `https://${config.customDomain}/${apiPath}api.json`;
+            
+            try {
+                const response = await fetch(domainUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`自定义域名API错误: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error("从自定义域名获取文件列表失败，尝试从GitHub API获取", error);
+                // 失败时回退到GitHub API
+                return await fetchFileListFromGitHubAPI(path);
             }
         }
 
@@ -883,8 +1410,18 @@
                     navigateToPath(filePath);
                 });
             } else {
-                // 文件链接直接指向 GitHub Pages 上的文件
-                link.href = filePath;
+                // 文件链接
+                if (config.useCustomDomain && config.customDomain) {
+                    // 使用自定义域名
+                    let fileUrl = `https://${config.customDomain}/${filePath}`;
+                    if (config.basePath) {
+                        fileUrl = `https://${config.customDomain}/${config.basePath}/${filePath}`;
+                    }
+                    link.href = fileUrl;
+                } else {
+                    // 使用GitHub Pages URL
+                    link.href = `https://${config.owner}.github.io/${config.repo}/${filePath}`;
+                }
                 link.target = '_blank';
             }
 
@@ -929,7 +1466,6 @@
 
             return fileItem;
         }
-
         // 根据文件类型获取图标和标签信息
         function getFileTypeInfo(fileName, isDirectory) {
             if (isDirectory) {
@@ -1066,6 +1602,10 @@
             currentPath = path;
             fetchFileList(path);
             
+            // 更新URL
+            const newUrl = path ? `?path=${encodeURIComponent(path)}` : window.location.pathname;
+            history.pushState({ path: path }, '', newUrl);
+            
             // 滚动到顶部
             window.scrollTo({
                 top: 0,
@@ -1125,6 +1665,7 @@
             }
         }
 
+
         // 搜索过滤文件
         function filterFiles() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
@@ -1165,6 +1706,7 @@
                 }
             }
         }
+
         // 显示/隐藏加载提示
         function showLoading(isLoading) {
             document.getElementById('loadingIndicator').style.display = isLoading ? 'block' : 'none';
@@ -1202,8 +1744,25 @@
                 fetchFileList(currentPath);
             });
             
+            // 添加设置按钮
+            const settingsButton = document.createElement('button');
+            settingsButton.textContent = '修改设置';
+            settingsButton.style.marginTop = '10px';
+            settingsButton.style.marginLeft = '10px';
+            settingsButton.style.padding = '8px 16px';
+            settingsButton.style.backgroundColor = '#6c757d';
+            settingsButton.style.color = 'white';
+            settingsButton.style.border = 'none';
+            settingsButton.style.borderRadius = '4px';
+            settingsButton.style.cursor = 'pointer';
+            
+            settingsButton.addEventListener('click', () => {
+                toggleSettingsPanel(true);
+            });
+            
             errorElement.appendChild(document.createElement('br'));
             errorElement.appendChild(retryButton);
+            errorElement.appendChild(settingsButton);
         }
 
         // 添加文件历史浏览支持
@@ -1232,13 +1791,18 @@
             if (pathParam) {
                 currentPath = pathParam;
                 fetchFileList(currentPath);
+            } else {
+                fetchFileList('');
             }
         }
 
-        // 页面加载时检查URL参数
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', () => {
+            // 更新页面标题
+            updatePageTitle();
+            
+            // 检查URL参数
             checkUrlForPath();
-            // 这里不需要再次调用fetchFileList，因为checkUrlForPath已经处理了
         });
 
         // 添加键盘导航支持

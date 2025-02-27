@@ -22,188 +22,141 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
+            height: 100%;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--light-bg);
-            padding: 20px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
             margin: 0 auto;
+            width: 100%;
+            max-width: 1200px;
             background-color: white;
-            border-radius: 8px;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             overflow: hidden;
         }
 
         header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             background-color: var(--header-color);
             color: white;
             padding: 20px;
-            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         header h1 {
             margin: 0;
             font-size: 1.8rem;
+            text-align: center;
         }
 
         header p {
             margin-top: 10px;
             opacity: 0.8;
             font-size: 1rem;
-        }
-
-        .content {
-            padding: 20px;
-        }
-
-        .section {
-            margin-bottom: 30px;
-        }
-
-        .section-title {
-            font-size: 1.3rem;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .file-list {
-            list-style: none;
-        }
-
-        .file-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            transition: background-color 0.2s;
-        }
-
-        .file-item:last-child {
-            border-bottom: none;
-        }
-
-        .file-item:hover {
-            background-color: var(--hover-color);
-        }
-
-        .file-item .icon {
-            margin-right: 12px;
-            width: 20px;
-            height: 20px;
-            flex-shrink: 0;
-        }
-
-        .file-item a {
-            color: var(--primary-color);
-            text-decoration: none;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-        }
-
-        .file-item a:hover {
-            text-decoration: underline;
-        }
-
-        .file-info {
-            margin-left: auto;
-            color: #6c757d;
-            font-size: 0.9em;
-            text-align: right;
-        }
-
-        .date {
-            font-size: 0.8em;
-            margin-top: 3px;
-        }
-
-        footer {
             text-align: center;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+        }
+
+        .controls {
+            background-color: #fff;
             padding: 15px;
-            background-color: var(--light-bg);
-            border-top: 1px solid var(--border-color);
-            color: #6c757d;
-            font-size: 0.9em;
+            border-radius: 5px;
+            margin: 15px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .search-container {
-            padding: 0 15px 15px 15px;
+            margin-bottom: 15px;
         }
 
         #searchInput {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 1rem;
+            transition: all 0.3s;
         }
 
-        .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 3px;
-            font-size: 0.75em;
-            margin-left: 8px;
-            background-color: #e9ecef;
-            color: #495057;
+        #searchInput:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.25);
+            outline: none;
         }
 
-        .tag-folder {
-            background-color: #ffc107;
-            color: black;
+        .path-input {
+            display: flex;
         }
 
-        .tag-html {
-            background-color: #7952b3;
+        .path-input input {
+            flex-grow: 1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .path-input input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.25);
+            outline: none;
+        }
+
+        .path-input button {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
             color: white;
-        }
-
-        .tag-css {
-            background-color: #0dcaf0;
-            color: white;
-        }
-
-        .tag-js {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        .tag-image {
-            background-color: #20c997;
-            color: white;
-        }
-
-        .tag-doc {
-            background-color: #0d6efd;
-            color: white;
-        }
-
-        .tag-other {
-            background-color: #6c757d;
-            color: white;
-        }
-
-        .folder-name {
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            transition: background-color 0.3s;
             font-weight: 500;
-            color: var(--secondary-color);
+        }
+
+        .path-input button:hover {
+            background-color: var(--secondary-color);
         }
 
         .breadcrumb {
             display: flex;
-            padding: 15px;
+            padding: 12px 15px;
             list-style: none;
             background-color: var(--light-bg);
             border-radius: 4px;
-            margin-bottom: 20px;
+            margin: 15px 0;
             overflow-x: auto;
             white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .breadcrumb-item {
@@ -220,56 +173,195 @@
         .breadcrumb-item a {
             color: var(--primary-color);
             text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
         }
 
         .breadcrumb-item.active {
             color: #6c757d;
         }
 
-        .file-description {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 3px;
+        .content {
+            flex: 1;
+            padding: 0 15px 20px 15px;
+            overflow-y: auto;
         }
 
         #loadingIndicator {
             text-align: center;
-            padding: 20px;
+            padding: 30px;
             color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        #loadingIndicator::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-left: 10px;
+            border: 3px solid rgba(74, 111, 165, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .file-list {
+            list-style: none;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-item {
+            padding: 14px 15px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .file-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-item:hover {
+            background-color: var(--hover-color);
+            transform: translateX(5px);
+        }
+
+        .file-item .icon {
+            margin-right: 15px;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .file-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .file-item a:hover {
+            text-decoration: underline;
+        }
+
+        .file-info {
+            margin-left: auto;
+            color: #6c757d;
+            font-size: 0.9em;
+            text-align: right;
+            min-width: 100px;
+        }
+
+        .date {
+            font-size: 0.8em;
+            margin-top: 3px;
+            color: #adb5bd;
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            margin-left: 10px;
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-folder {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-html {
+            background-color: #f0e7f9;
+            color: #7952b3;
+        }
+
+        .tag-css {
+            background-color: #e3f6fd;
+            color: #0dcaf0;
+        }
+
+        .tag-js {
+            background-color: #fff3cd;
+            color: #997404;
+        }
+
+        .tag-image {
+            background-color: #d8f3eb;
+            color: #20c997;
+        }
+
+        .tag-doc {
+            background-color: #e6f2ff;
+            color: #0d6efd;
+        }
+
+        .tag-other {
+            background-color: #e9ecef;
+            color: #495057;
         }
 
         .error-message {
             background-color: #f8d7da;
             color: #721c24;
-            padding: 15px;
+            padding: 20px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
 
-        .path-input {
-            display: flex;
-            padding: 0 15px 15px 15px;
-        }
-
-        .path-input input {
-            flex-grow: 1;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px 0 0 4px;
-            font-size: 1rem;
-        }
-
-        .path-input button {
-            padding: 10px 15px;
-            background-color: var(--primary-color);
+        footer {
+            background-color: var(--header-color);
             color: white;
-            border: none;
-            border-radius: 0 4px 4px 0;
-            cursor: pointer;
+            text-align: center;
+            padding: 15px 20px;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .path-input button:hover {
-            background-color: var(--secondary-color);
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-content p {
+            margin: 0;
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .empty-message {
+            padding: 30px;
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
         }
 
         /* 响应式设计 */
@@ -277,52 +369,110 @@
             .file-info {
                 display: none;
             }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            header p {
+                font-size: 0.9rem;
+            }
+            
+            .container {
+                margin: 0;
+                box-shadow: none;
+            }
+            
+            .file-item {
+                padding: 12px 10px;
+            }
+            
+            .tag {
+                font-size: 0.7em;
+                padding: 3px 6px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .breadcrumb {
+                font-size: 0.9em;
+                padding: 8px 10px;
+            }
+            
+            .file-item .icon {
+                width: 20px;
+                height: 20px;
+                margin-right: 10px;
+            }
+            
+            .path-input button {
+                padding: 12px 15px;
+            }
+            
+            .controls {
+                padding: 10px;
+            }
+        }
+
+        @media (min-width: 992px) {
+            .container {
+                border-radius: 8px;
+                margin: 15px auto;
+                min-height: calc(100vh - 30px);
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <header>
+        <div class="header-content">
             <h1>GitHub Pages 文件索引</h1>
             <p>浏览并访问本项目中的文件</p>
-        </header>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="搜索文件...">
         </div>
+    </header>
 
-        <div class="path-input">
-            <input type="text" id="pathInput" placeholder="输入路径 (例如: docs, images/icons)">
-            <button id="goButton">转到</button>
+    <div class="container">
+        <div class="main">
+            <div class="controls">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="搜索文件...">
+                </div>
+
+                <div class="path-input">
+                    <input type="text" id="pathInput" placeholder="输入路径 (例如: docs, images/icons)">
+                    <button id="goButton">转到</button>
+                </div>
+            </div>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb" id="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" data-path="">根目录</a></li>
+                </ol>
+            </nav>
+
+            <div class="content">
+                <div id="loadingIndicator">加载中</div>
+                <div id="fileExplorer"></div>
+            </div>
         </div>
-
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb" id="breadcrumb">
-                <li class="breadcrumb-item"><a href="#" data-path="">根目录</a></li>
-            </ol>
-        </nav>
-
-        <div class="content">
-            <div id="loadingIndicator">加载中...</div>
-            <div id="fileExplorer"></div>
-        </div>
-
-        <footer>
-            <p>© <span id="currentYear"></span> GitHub Pages 索引 | 使用 GitHub API 自动生成</p>
-        </footer>
     </div>
+
+    <footer>
+        <div class="footer-content">
+            <p>© <span id="currentYear"></span> GitHub Pages 索引</p>
+            <p>使用 GitHub API 自动生成</p>
+        </div>
+    </footer>
 
     <script>
         // 配置信息 - 需要修改为您的 GitHub 用户名和仓库名
-// 修改配置对象
-const config = {
-    owner: 'k-0-i', // 修改为您的 GitHub 用户名
-    repo: 'html',  // 修改为您的仓库名
-    branch: 'main',         // 默认分支，通常是 main 或 master
-    basePath: '',           // 如果您的文件不在根目录，可以设置一个基础路径
-    ignoredFiles: ['CNAME', 'index.html', '.gitignore', 'README.md'] // 要忽略的文件列表
-};
-
+        const config = {
+            owner: 'k-0-i', // 修改为您的 GitHub 用户名
+            repo: 'html',  // 修改为您的仓库名
+            branch: 'main',         // 默认分支，通常是 main 或 master
+            basePath: '',           // 如果您的文件不在根目录，可以设置一个基础路径
+            ignoredFiles: ['CNAME', 'index.html', '.gitignore', 'README.md'] // 要忽略的文件列表
+        };
 
         // 当前路径状态
         let currentPath = '';
@@ -383,49 +533,41 @@ const config = {
         }
 
         // 显示文件列表
-// 在 displayFiles 函数中添加文件过滤逻辑
-function displayFiles(files, path) {
-    const fileExplorer = document.getElementById('fileExplorer');
-    fileExplorer.innerHTML = '';
+        function displayFiles(files, path) {
+            const fileExplorer = document.getElementById('fileExplorer');
+            fileExplorer.innerHTML = '';
 
-    // 要忽略的文件列表
-    const ignoredFiles = ['CNAME', 'index.html'];
-    
-    // 过滤掉要忽略的文件
-    //files = files.filter(file => !ignoredFiles.includes(file.name));
-// 过滤掉要忽略的文件
-files = files.filter(file => !config.ignoredFiles.includes(file.name));
+            // 过滤掉要忽略的文件
+            files = files.filter(file => !config.ignoredFiles.includes(file.name));
 
+            // 按类型分组：文件夹优先
+            const folders = files.filter(file => file.type === 'dir');
+            const fileItems = files.filter(file => file.type === 'file');
 
-    // 按类型分组：文件夹优先
-    const folders = files.filter(file => file.type === 'dir');
-    const fileItems = files.filter(file => file.type === 'file');
+            // 按名称排序
+            folders.sort((a, b) => a.name.localeCompare(b.name));
+            fileItems.sort((a, b) => a.name.localeCompare(b.name));
 
-    // 按名称排序
-    folders.sort((a, b) => a.name.localeCompare(b.name));
-    fileItems.sort((a, b) => a.name.localeCompare(b.name));
+            // 合并排序后的列表
+            const sortedFiles = [...folders, ...fileItems];
 
-    // 合并排序后的列表
-    const sortedFiles = [...folders, ...fileItems];
+            if (sortedFiles.length === 0) {
+                fileExplorer.innerHTML = '<div class="empty-message">此目录为空</div>';
+                return;
+            }
 
-    if (sortedFiles.length === 0) {
-        fileExplorer.innerHTML = '<p>此目录为空</p>';
-        return;
-    }
+            // 创建文件列表
+            const fileList = document.createElement('ul');
+            fileList.className = 'file-list';
 
-    // 创建文件列表
-    const fileList = document.createElement('ul');
-    fileList.className = 'file-list';
+            // 添加文件项
+            sortedFiles.forEach(file => {
+                const fileItem = createFileItem(file, path);
+                fileList.appendChild(fileItem);
+            });
 
-    // 添加文件项
-    sortedFiles.forEach(file => {
-        const fileItem = createFileItem(file, path);
-        fileList.appendChild(fileItem);
-    });
-
-    fileExplorer.appendChild(fileList);
-}
-
+            fileExplorer.appendChild(fileList);
+        }
 
         // 创建单个文件项
         function createFileItem(file, currentPath) {
@@ -634,6 +776,12 @@ files = files.filter(file => !config.ignoredFiles.includes(file.name));
             path = path.replace(/^\/+/, '');
             currentPath = path;
             fetchFileList(path);
+            
+            // 滚动到顶部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
 
         // 更新面包屑导航
@@ -692,16 +840,41 @@ files = files.filter(file => !config.ignoredFiles.includes(file.name));
         function filterFiles() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const fileItems = document.querySelectorAll('.file-item');
+            let hasResults = false;
             
             fileItems.forEach(item => {
                 const fileName = item.querySelector('a').textContent.toLowerCase();
                 
                 if (fileName.includes(searchTerm)) {
                     item.style.display = '';
+                    hasResults = true;
                 } else {
                     item.style.display = 'none';
                 }
             });
+            
+            // 显示无结果消息
+            const fileExplorer = document.getElementById('fileExplorer');
+            const existingNoResults = fileExplorer.querySelector('.empty-message');
+            
+            if (!hasResults && searchTerm && !existingNoResults) {
+                const noResults = document.createElement('div');
+                noResults.className = 'empty-message';
+                noResults.textContent = `没有找到包含 "${searchTerm}" 的文件`;
+                
+                // 检查是否已有文件列表
+                const fileList = fileExplorer.querySelector('.file-list');
+                if (fileList) {
+                    fileList.style.display = 'none';
+                    fileExplorer.appendChild(noResults);
+                }
+            } else if ((hasResults || !searchTerm) && existingNoResults) {
+                existingNoResults.remove();
+                const fileList = fileExplorer.querySelector('.file-list');
+                if (fileList) {
+                    fileList.style.display = '';
+                }
+            }
         }
 
         // 显示/隐藏加载提示
@@ -713,12 +886,86 @@ files = files.filter(file => !config.ignoredFiles.includes(file.name));
         function showError(message) {
             const errorElement = document.createElement('div');
             errorElement.className = 'error-message';
-            errorElement.textContent = message;
+            errorElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 10px;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                ${message}
+            `;
             
             const fileExplorer = document.getElementById('fileExplorer');
             fileExplorer.innerHTML = '';
             fileExplorer.appendChild(errorElement);
+            
+            // 添加重试按钮
+            const retryButton = document.createElement('button');
+            retryButton.textContent = '重试';
+            retryButton.style.marginTop = '10px';
+            retryButton.style.padding = '8px 16px';
+            retryButton.style.backgroundColor = 'var(--primary-color)';
+            retryButton.style.color = 'white';
+            retryButton.style.border = 'none';
+            retryButton.style.borderRadius = '4px';
+            retryButton.style.cursor = 'pointer';
+            
+            retryButton.addEventListener('click', () => {
+                fetchFileList(currentPath);
+            });
+            
+            errorElement.appendChild(document.createElement('br'));
+            errorElement.appendChild(retryButton);
         }
+
+        // 添加文件历史浏览支持
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.path !== undefined) {
+                currentPath = event.state.path;
+                fetchFileList(currentPath);
+            }
+        });
+
+        // 初始化历史状态
+        history.replaceState({ path: currentPath }, '');
+
+        // 创建自定义导航事件处理
+        function customNavigate(path) {
+            currentPath = path;
+            history.pushState({ path: path }, '', `?path=${encodeURIComponent(path)}`);
+            fetchFileList(path);
+        }
+
+        // 检查URL参数中是否包含路径
+        function checkUrlForPath() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pathParam = urlParams.get('path');
+            
+            if (pathParam) {
+                currentPath = pathParam;
+                fetchFileList(currentPath);
+            }
+        }
+
+        // 页面加载时检查URL参数
+        document.addEventListener('DOMContentLoaded', () => {
+            checkUrlForPath();
+            // 这里不需要再次调用fetchFileList，因为checkUrlForPath已经处理了
+        });
+
+        // 添加键盘导航支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Escape键返回上一级
+                if (currentPath) {
+                    const pathParts = currentPath.split('/');
+                    pathParts.pop();
+                    const parentPath = pathParts.join('/');
+                    navigateToPath(parentPath);
+                }
+            }
+        });
     </script>
 </body>
 </html>
+

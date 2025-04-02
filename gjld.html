@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>硅基流动余额与有效性检测</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 自定义一些基础样式 */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* 加载动画样式 */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* 设置文本区域通用样式 */
+        textarea[readonly] {
+            /* background-color is now set via specific classes */
+            cursor: default;
+            overflow-y: auto; /* Enable vertical scroll */
+            border: 1px solid #e5e7eb; /* Light border */
+            border-radius: 0.375rem; /* Rounded corners */
+            padding: 0.5rem; /* Padding */
+            font-family: monospace; /* Use monospace font for keys */
+            font-size: 0.875rem; /* Slightly smaller font */
+            line-height: 1.25rem;
+            color: #374151; /* Darker text */
+            width: 100%; /* Ensure textarea takes full width */
+        }
+        /* 调整按钮样式 */
+        .action-button {
+             background-color: #3b82f6; /* Blue-500 */
+             color: white;
+             font-weight: bold;
+             padding: 0.5rem 1rem;
+             border-radius: 0.375rem;
+             transition: background-color 150ms ease-in-out;
+             display: inline-flex;
+             align-items: center;
+             cursor: pointer;
+             font-size: 0.875rem; /* text-sm */
+        }
+        .action-button:hover {
+            background-color: #2563eb; /* Blue-600 */
+        }
+        .action-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .copy-button {
+             background-color: #10b981; /* Emerald-500 */
+        }
+        .copy-button:hover {
+             background-color: #059669; /* Emerald-600 */
+        }
+        /* 清空按钮样式 */
+        .clear-button {
+             background-color: #ef4444; /* Red-500 */
+        }
+        .clear-button:hover {
+             background-color: #dc2626; /* Red-600 */
+        }
+         /* 导出按钮样式 */
+        .export-button {
+             background-color: #6b7280; /* Gray-500 */
+             padding: 0.3rem 0.8rem; /* Smaller padding */
+        }
+        .export-button:hover {
+             background-color: #4b5563; /* Gray-600 */
+        }
+        /* 进度条样式 */
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* gray-200 */
+            border-radius: 0.375rem; /* rounded-md */
+            overflow: hidden;
+            height: 10px; /* h-2.5 */
+            margin-bottom: 0.5rem; /* mb-2, reduced margin */
+        }
+        .progress-bar {
+            background-color: #3b82f6; /* blue-500 */
+            height: 100%;
+            width: 0%; /* Start at 0% */
+            transition: width 0.3s ease-out; /* Smooth transition */
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        /* 让提示框内的链接样式更明显 */
+        .alert-link {
+            font-weight: 600; /* semibold */
+            text-decoration: underline;
+            color: #2563eb; /* blue-600 */
+        }
+        .alert-link:hover {
+             color: #1d4ed8; /* blue-700 */
+        }
+        /* 配置输入框样式 - 已移除，此样式不再需要 */
+        /* .config-input { ... } */
+    </style>
+</head>
+<body class="bg-gray-100 p-6 md:p-8">
+
+    <div class="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <h1 class="text-2xl font-bold mb-4 text-center text-gray-800">硅基流动 Token 有效性检测</h1>
+
+        <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded-md text-sm" role="alert">
+          <p class="font-bold">提示</p>
+          <p>纯前端检测，您的 API 密钥仅用于浏览器本地通过硅基流动官方接口 (<code class="text-xs bg-blue-200 px-1 rounded">https://api.siliconflow.cn/v1/user/info</code>) 进行查询，不会被存储或发送到任何非官方服务器。</p>
+        </div>
+
+        <div class="mb-4">
+            <label for="apiKeys" class="block text-sm font-medium text-gray-700 mb-1">输入 API 密钥 (可用换行、逗号、空格分隔):</label>
+            <textarea id="apiKeys" rows="6" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 font-mono text-sm" placeholder="sk-xxx...&#10;sk-yyy..., sk-zzz... sk-aaa..."></textarea>
+        </div>
+
+        <div class="flex flex-wrap justify-center items-center gap-4 mb-6">
+            <button id="queryButton" class="action-button">
+                开始检测
+                <span id="loadingIndicator" class="hidden loader"></span>
+            </button>
+            <button id="copyButton" class="action-button copy-button" disabled>
+                复制有效密钥
+            </button>
+             <button id="clearButton" class="action-button clear-button">
+                清空输入
+            </button>
+        </div>
+
+         <div id="progressBarContainer" class="progress-bar-container hidden">
+             <div id="progressBar" class="progress-bar"></div>
+         </div>
+         <div id="progressText" class="text-center text-sm text-gray-600 mb-2"></div>
+         <div id="completionMessage" class="text-center text-sm text-green-600 font-semibold mb-4 h-5"></div>
+
+
+         <div id="errorMessage" class="mb-4 text-red-600 text-center text-sm"></div>
+
+        <div class="space-y-4">
+            <div>
+                <div class="flex justify-between items-center mb-1">
+                    <label for="validKeysArea" class="block text-sm font-medium text-gray-700">有余额账号:</label>
+                    <button id="exportValidButton" class="action-button export-button" disabled>导出有效密钥 TXT</button>
+                </div>
+                <textarea id="validKeysArea" readonly class="h-32 bg-green-50"></textarea>
+            </div>
+            <div>
+                 <div class="flex justify-between items-center mb-1">
+                    <label for="zeroBalanceKeysArea" class="block text-sm font-medium text-gray-700">零余额账号:</label>
+                    </div>
+                 <textarea id="zeroBalanceKeysArea" readonly class="h-11 bg-yellow-50"></textarea>
+            </div>
+            <div>
+                 <div class="flex justify-between items-center mb-1">
+                     <label for="invalidKeysArea" class="block text-sm font-medium text-gray-700">失效账号:</label>
+                     </div>
+                 <textarea id="invalidKeysArea" readonly class="h-11 bg-red-50"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Element References ---
+        const apiKeysTextarea = document.getElementById('apiKeys');
+        const queryButton = document.getElementById('queryButton');
+        const copyButton = document.getElementById('copyButton');
+        const clearButton = document.getElementById('clearButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const validKeysArea = document.getElementById('validKeysArea');
+        const zeroBalanceKeysArea = document.getElementById('zeroBalanceKeysArea');
+        const invalidKeysArea = document.getElementById('invalidKeysArea');
+        const progressBarContainer = document.getElementById('progressBarContainer');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const completionMessage = document.getElementById('completionMessage');
+        // 移除配置输入框的引用
+        // const batchSizeInput = document.getElementById('batchSizeInput');
+        // const timeoutInput = document.getElementById('timeoutInput');
+        const exportValidButton = document.getElementById('exportValidButton');
+        // 移除其他导出按钮的引用
+        // const exportZeroButton = document.getElementById('exportZeroButton');
+        // const exportInvalidButton = document.getElementById('exportInvalidButton');
+
+        // --- Constants and State ---
+        const API_ENDPOINT = "https://api.siliconflow.cn/v1/user/info";
+        const BATCH_SIZE = 25; // 使用固定的批处理大小
+        const TIMEOUT_MS = 10000; // 使用固定的超时时间 (ms)
+        let validKeysToCopy = []; // 只存储有效的 key 本身
+        let processedCount = 0;
+        let totalKeys = 0;
+        // 移除 currentBatchSize 和 currentTimeout 变量
+
+        // --- Helper Functions ---
+
+        // 下载文件函数 (保持不变)
+        function downloadFile(filename, content) {
+            const element = document.createElement('a');
+            const file = new Blob([content], {type: 'text/plain;charset=utf-8'}); // Ensure UTF-8 encoding
+            element.href = URL.createObjectURL(file);
+            element.download = filename;
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+            URL.revokeObjectURL(element.href);
+        }
+
+        // 获取配置值的函数 - 已移除
+        // function getConfigValue(...) { ... }
+
+        // 更新导出按钮状态 (简化)
+        function updateExportButtonState() {
+            // 只需根据 validKeysToCopy 数组是否有内容来决定
+            exportValidButton.disabled = validKeysToCopy.length === 0;
+        }
+
+        // --- Core Logic ---
+
+        // 查询单个 API 密钥的余额 (使用固定超时)
+        async function queryBalance(apiKey) { // 移除 timeoutMs 参数
+            const trimmedKey = apiKey.trim();
+            if (!trimmedKey || !trimmedKey.startsWith('sk-')) {
+                return { key: apiKey, balance: 'N/A', status: '无效的密钥格式', success: false };
+            }
+            const headers = new Headers({
+                "Authorization": `Bearer ${trimmedKey}`,
+                "Content-Type": "application/json"
+            });
+            const controller = new AbortController();
+            // 使用固定的 TIMEOUT_MS
+            const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'GET',
+                    headers: headers,
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    let statusText = `请求失败: ${response.statusText} (${response.status})`;
+                    if (response.status === 401 || response.status === 403) {
+                         statusText = `请求失败: 密钥无效或无权限 (${response.status})`;
+                    }
+                    return { key: apiKey, balance: 'N/A', status: statusText, success: false };
+                }
+                const data = await response.json();
+                let balance = '未找到';
+                if (data && data.data && typeof data.data.balance !== 'undefined' && data.data.balance !== null) {
+                    balance = data.data.balance;
+                } else if (data && typeof data.balance !== 'undefined' && data.balance !== null) {
+                     balance = data.balance;
+                }
+                const formattedBalance = typeof balance === 'number' ? balance.toFixed(4) : balance;
+                return {
+                    key: trimmedKey,
+                    balance: formattedBalance,
+                    status: '查询成功',
+                    success: true
+                 };
+            } catch (error) {
+                clearTimeout(timeoutId);
+                let statusMessage = '查询失败: 网络错误或无法连接';
+                 if (error.name === 'AbortError') {
+                    statusMessage = '查询失败: 请求超时';
+                } else if (error instanceof SyntaxError) {
+                    statusMessage = '查询失败: 响应不是有效的 JSON';
+                }
+                console.error(`查询 API Key ${trimmedKey} 时出错:`, error);
+                return { key: apiKey, balance: 'N/A', status: statusMessage, success: false };
+            }
+        }
+
+        // 更新结果显示区域 (逐步追加)
+        function appendResults(resultsBatch) {
+            let generalError = false;
+
+            resultsBatch.forEach(result => {
+                processedCount++;
+                if (result.status === 'fulfilled') {
+                    const data = result.value;
+                    const displayKey = data.key;
+                    if (data.success) {
+                        const balanceValue = parseFloat(data.balance);
+                        if (!isNaN(balanceValue) && balanceValue > 0) {
+                            // 显示时仍然带余额，但只将 key 加入待复制/导出列表
+                            validKeysArea.value += `${displayKey} (余额: ${data.balance})\n`;
+                            validKeysToCopy.push(displayKey); // 只添加 key
+                        } else {
+                            zeroBalanceKeysArea.value += `${displayKey}\n`;
+                        }
+                    } else {
+                        invalidKeysArea.value += `${displayKey} (${data.status})\n`;
+                        if (data.status.includes('网络错误') || data.status.includes('无法连接') || data.status.includes('超时')) {
+                           generalError = true;
+                        }
+                    }
+                } else {
+                    console.error("未处理的查询错误:", result.reason);
+                     invalidKeysArea.value += `未知密钥 (查询异常: ${result.reason})\n`;
+                     generalError = true;
+                }
+            });
+
+            // 更新进度条和文本
+            const progressPercentage = totalKeys > 0 ? Math.round((processedCount / totalKeys) * 100) : 0;
+            progressBar.style.width = `${progressPercentage}%`;
+            progressText.textContent = `处理中: ${processedCount} / ${totalKeys} ( ${progressPercentage}% )`;
+
+            // 不再逐步更新按钮状态
+            // copyButton.disabled = validKeysToCopy.length === 0;
+            // updateExportButtonState();
+
+            if (generalError && !errorMessageDiv.textContent.includes('网络问题或超时')) {
+                 errorMessageDiv.textContent += ' 部分查询可能因网络问题或超时失败。';
+            }
+        }
+
+        // 分批处理 API 密钥
+        async function processKeysInBatches(apiKeys) {
+            totalKeys = apiKeys.length;
+            processedCount = 0;
+            validKeysToCopy = []; // 重置
+
+            // 移除配置读取
+            // currentBatchSize = getConfigValue(...);
+            // currentTimeout = getConfigValue(...);
+
+            // 重置界面
+            validKeysArea.value = '';
+            zeroBalanceKeysArea.value = '';
+            invalidKeysArea.value = '';
+            errorMessageDiv.textContent = '';
+            completionMessage.textContent = '';
+            progressBarContainer.classList.remove('hidden');
+            progressBar.style.width = '0%';
+            progressText.textContent = `准备处理: 0 / ${totalKeys} ( 0% )`;
+            copyButton.disabled = true;
+            updateExportButtonState(); // 重置时禁用导出按钮
+
+
+            // 使用固定的 BATCH_SIZE
+            for (let i = 0; i < apiKeys.length; i += BATCH_SIZE) {
+                const batch = apiKeys.slice(i, i + BATCH_SIZE);
+                console.log(`正在处理批次: ${Math.floor(i / BATCH_SIZE) + 1}, 大小: ${batch.length}, 超时: ${TIMEOUT_MS}ms`);
+
+                // 不再传入超时时间，queryBalance 使用固定值
+                const batchResults = await Promise.allSettled(batch.map(key => queryBalance(key)));
+
+                appendResults(batchResults);
+
+                // 可选延时
+                // await new Promise(resolve => setTimeout(resolve, 50));
+            }
+
+            // 所有批次处理完成
+            progressText.textContent = `处理完成: ${totalKeys} / ${totalKeys} ( 100% )`;
+            console.log("所有批次处理完成");
+
+             // 更新最终按钮状态
+             copyButton.disabled = validKeysToCopy.length === 0;
+             updateExportButtonState(); // 根据最终结果启用/禁用导出按钮
+
+             // 显示完成提示
+             if (!errorMessageDiv.textContent.includes('错误')) {
+                 completionMessage.textContent = '检测完成！';
+                 setTimeout(() => {
+                     completionMessage.textContent = '';
+                 }, 3000);
+             }
+
+             if (validKeysToCopy.length === 0 && totalKeys > 0 && !errorMessageDiv.textContent.includes('网络问题或超时')) {
+                 errorMessageDiv.textContent = '未找到有余额的有效账号。';
+             }
+        }
+
+        // --- Event Listeners ---
+
+        // 点击查询按钮
+        queryButton.addEventListener('click', async () => {
+            const keysInput = apiKeysTextarea.value.trim();
+            const apiKeys = keysInput ? keysInput.split(/[,\s\n]+/).map(key => key.trim()).filter(key => key) : [];
+
+            if (apiKeys.length === 0) {
+                 errorMessageDiv.textContent = '没有检测到有效的 API 密钥格式。请检查输入。';
+                 copyButton.disabled = true;
+                 updateExportButtonState();
+                 progressBarContainer.classList.add('hidden');
+                 progressText.textContent = '';
+                 completionMessage.textContent = '';
+                 validKeysArea.value = '';
+                 zeroBalanceKeysArea.value = '';
+                 invalidKeysArea.value = '';
+                 return;
+            }
+
+            queryButton.disabled = true;
+            copyButton.disabled = true;
+            clearButton.disabled = true;
+            updateExportButtonState(); // 查询开始时禁用导出
+            copyButton.textContent = '复制有效密钥';
+            queryButton.classList.add('opacity-50', 'cursor-not-allowed');
+            loadingIndicator.classList.remove('hidden');
+
+            try {
+                await processKeysInBatches(apiKeys);
+            } catch (error) {
+                console.error("处理批次时发生意外错误:", error);
+                errorMessageDiv.textContent = `处理过程中发生意外错误: ${error.message}`;
+                progressBarContainer.classList.add('hidden');
+                progressText.textContent = '';
+                completionMessage.textContent = '';
+            } finally {
+                queryButton.disabled = false;
+                clearButton.disabled = false;
+                queryButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                loadingIndicator.classList.add('hidden');
+                 // 复制和导出按钮状态已在 processKeysInBatches 中设置
+            }
+        });
+
+        // 点击复制按钮 (保持不变, 复制的是 validKeysToCopy 中的纯 key)
+        copyButton.addEventListener('click', () => {
+            if (validKeysToCopy.length > 0) {
+                const textToCopy = validKeysToCopy.join('\n');
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyButton.textContent = '已复制!';
+                    setTimeout(() => {
+                        copyButton.textContent = '复制有效密钥';
+                    }, 1500);
+                }).catch(err => {
+                    console.error('无法复制到剪贴板:', err);
+                    errorMessageDiv.textContent = '复制失败，请检查浏览器权限或手动复制。';
+                });
+            }
+        });
+
+        // 点击清空按钮
+        clearButton.addEventListener('click', () => {
+            apiKeysTextarea.value = '';
+            validKeysArea.value = '';
+            zeroBalanceKeysArea.value = '';
+            invalidKeysArea.value = '';
+            validKeysToCopy = [];
+            errorMessageDiv.textContent = '';
+            completionMessage.textContent = '';
+            copyButton.disabled = true;
+            updateExportButtonState(); // 禁用导出按钮
+            copyButton.textContent = '复制有效密钥';
+            progressBarContainer.classList.add('hidden');
+            progressText.textContent = '';
+            console.log("输入和结果已清空");
+        });
+
+        // --- Export Button Listeners (简化) ---
+        exportValidButton.addEventListener('click', () => {
+            // 导出 validKeysToCopy 数组的内容，而不是文本框内容
+            if (validKeysToCopy.length > 0) {
+                 const contentToExport = validKeysToCopy.join('\n');
+                 downloadFile('valid_keys.txt', contentToExport);
+            }
+        });
+
+        // 移除其他导出按钮的监听器
+        // exportZeroButton.addEventListener(...)
+        // exportInvalidButton.addEventListener(...)
+
+        // --- Initial Setup ---
+        updateExportButtonState(); // 设置初始状态
+
+    </script>
+
+</body>
+</html>

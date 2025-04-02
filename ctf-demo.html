@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTF Web Competition Knowledge Base</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0ea5e9 100%);
+        }
+        .search-highlight {
+            background-color: rgba(254, 240, 138, 0.5);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <i class="fas fa-flag-checkered text-3xl mr-3"></i>
+                    <h1 class="text-2xl md:text-3xl font-bold">CTF Web Knowledge Base</h1>
+                </div>
+                <div class="relative w-full md:w-64">
+                    <input type="text" id="searchInput" placeholder="Search vulnerabilities..." class="w-full px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <button id="searchBtn" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar -->
+            <aside class="w-full lg:w-1/4 bg-white rounded-lg shadow-md p-6 h-fit sticky top-6">
+                <h2 class="text-xl font-bold mb-4 text-gray-800 border-b pb-2">Categories</h2>
+                <ul class="space-y-2">
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="all">
+                            <i class="fas fa-layer-group mr-2"></i> All Topics
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="injection">
+                            <i class="fas fa-syringe mr-2"></i> Injection
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="xss">
+                            <i class="fas fa-code mr-2"></i> XSS
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="csrf">
+                            <i class="fas fa-exchange-alt mr-2"></i> CSRF
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="auth">
+                            <i class="fas fa-user-shield mr-2"></i> Auth Bypass
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="file">
+                            <i class="fas fa-file-upload mr-2"></i> File Upload
+                        </button>
+                    </li>
+                    <li>
+                        <button class="category-btn w-full text-left px-3 py-2 rounded-md hover:bg-blue-50 hover:text-blue-600 transition flex items-center" data-category="misc">
+                            <i class="fas fa-puzzle-piece mr-2"></i> Miscellaneous
+                        </button>
+                    </li>
+                </ul>
+
+                <h2 class="text-xl font-bold mt-8 mb-4 text-gray-800 border-b pb-2">Difficulty</h2>
+                <div class="space-y-2">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="beginner" class="rounded text-blue-500 mr-2" checked>
+                        <label for="beginner" class="cursor-pointer">Beginner</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="intermediate" class="rounded text-blue-500 mr-2" checked>
+                        <label for="intermediate" class="cursor-pointer">Intermediate</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="advanced" class="rounded text-blue-500 mr-2" checked>
+                        <label for="advanced" class="cursor-pointer">Advanced</label>
+                    </div>
+                </div>
+
+                <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <h3 class="font-bold text-blue-800 mb-2"><i class="fas fa-lightbulb mr-2"></i>Pro Tip</h3>
+                    <p class="text-sm text-blue-700">Use "inurl:ctf" in Google to find active CTF challenges to practice these techniques.</p>
+                </div>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="w-full lg:w-3/4">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white rounded-lg shadow-md p-6 flex items-center card-hover">
+                        <div class="bg-green-100 text-green-800 rounded-full p-3 mr-4">
+                            <i class="fas fa-shield-alt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-500 text-sm font-medium">Vulnerabilities</h3>
+                            <p class="text-2xl font-bold">127</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 flex items-center card-hover">
+                        <div class="bg-yellow-100 text-yellow-800 rounded-full p-3 mr-4">
+                            <i class="fas fa-code-branch text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-500 text-sm font-medium">Techniques</h3>
+                            <p class="text-2xl font-bold">89</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6 flex items-center card-hover">
+                        <div class="bg-red-100 text-red-800 rounded-full p-3 mr-4">
+                            <i class="fas fa-tools text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-500 text-sm font-medium">Tools</h3>
+                            <p class="text-2xl font-bold">42</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Knowledge Cards Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="knowledgeGrid">
+                    <!-- Cards will be inserted here by JavaScript -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-8 flex justify-center">
+                    <nav class="flex items-center space-x-2">
+                        <button class="pagination-btn inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+                            <i class="fas fa-chevron-left mr-2"></i> Previous
+                        </button>
+                        <button class="pagination-btn inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+                            1
+                        </button>
+                        <button class="pagination-btn inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+                            2
+                        </button>
+                        <button class="pagination-btn inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+                            3
+                        </button>
+                        <button class="pagination-btn inline-flex items-center px-4 py-2 border border-gray-300 rounded-md bg-white text-gray-700 hover:bg-gray-50">
+                            Next <i class="fas fa-chevron-right ml-2"></i>
+                        </button>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div id="knowledgeModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center border-b p-4">
+                <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto flex-grow">
+                <div class="flex items-center mb-4">
+                    <span id="modalCategory" class="px-3 py-1 rounded-full text-xs font-medium mr-3"></span>
+                    <span id="modalDifficulty" class="px-3 py-1 rounded-full text-xs font-medium"></span>
+                </div>
+                <div id="modalContent" class="prose max-w-none"></div>
+                <div class="mt-6 pt-4 border-t">
+                    <h4 class="font-bold mb-2 text-gray-700">
+                        <i class="fas fa-tools mr-2"></i>Related Tools:
+                    </h4>
+                    <div id="modalTools" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Knowledge Base Data
+        const knowledgeBase = [
+            {
+                id: 1,
+                title: "SQL Injection",
+                description: "Exploit vulnerable SQL queries to bypass authentication or extract data from databases.",
+                category: "injection",
+                difficulty: "beginner",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">What is SQL Injection?</h3>
+                    <p>SQL injection is a web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database.</p>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Basic Example</h3>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-sql">SELECT * FROM users WHERE username = '$username' AND password = '$password'</code></pre>
+                    <p class="mt-2">An attacker could input: <code class="bg-gray-100 px-1 rounded">admin'--</code> as the username to bypass authentication.</p>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Use prepared statements with parameterized queries</li>
+                        <li>Use ORM frameworks</li>
+                        <li>Implement input validation</li>
+                        <li>Limit database permissions</li>
+                    </ul>
+                `,
+                tools: ["sqlmap", "Burp Suite", "Havij"]
+            },
+            {
+                id: 2,
+                title: "Cross-Site Scripting (XSS)",
+                description: "Inject malicious JavaScript code that executes in the browsers of other users.",
+                category: "xss",
+                difficulty: "beginner",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">Types of XSS</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                            <h4 class="font-bold text-blue-800">Stored XSS</h4>
+                            <p class="text-sm">Malicious script is permanently stored on the target server.</p>
+                        </div>
+                        <div class="bg-green-50 p-3 rounded border border-green-100">
+                            <h4 class="font-bold text-green-800">Reflected XSS</h4>
+                            <p class="text-sm">Script is reflected off a web server in an error message or search result.</p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded border border-purple-100">
+                            <h4 class="font-bold text-purple-800">DOM XSS</h4>
+                            <p class="text-sm">Vulnerability exists in client-side code rather than server-side code.</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Example Payloads</h3>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-html">&lt;script&gt;alert('XSS')&lt;/script&gt;
+&lt;img src="x" onerror="alert('XSS')"&gt;
+javascript:alert('XSS')</code></pre>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Implement proper output encoding</li>
+                        <li>Use Content Security Policy (CSP)</li>
+                        <li>Validate and sanitize user input</li>
+                        <li>Use framework protections (e.g., React's JSX, Angular's sanitizer)</li>
+                    </ul>
+                `,
+                tools: ["BeEF", "XSS Hunter", "Burp Suite"]
+            },
+            {
+                id: 3,
+                title: "CSRF (Cross-Site Request Forgery)",
+                description: "Force an authenticated user to perform unwanted actions on a web application.",
+                category: "csrf",
+                difficulty: "intermediate",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">How CSRF Works</h3>
+                    <p>An attacker tricks the victim into submitting a malicious request. It inherits the victim's identity and privileges to perform an undesired function on their behalf.</p>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Example Attack</h3>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-html">&lt;img src="http://bank.com/transfer?amount=1000&to=attacker" width="0" height="0"&gt;</code></pre>
+                    <p class="mt-2">If the user is logged into their bank, this invisible image will make a transfer without their knowledge.</p>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Use CSRF tokens (synchronizer token pattern)</li>
+                        <li>Check the Origin/Referer headers</li>
+                        <li>Implement SameSite cookies</li>
+                        <li>Require re-authentication for sensitive actions</li>
+                    </ul>
+                `,
+                tools: ["Burp Suite", "OWASP ZAP", "CSRF Tester"]
+            },
+            {
+                id: 4,
+                title: "JWT Vulnerabilities",
+                description: "Exploit weaknesses in JSON Web Token implementation for unauthorized access.",
+                category: "auth",
+                difficulty: "intermediate",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">Common JWT Vulnerabilities</h3>
+                    <ul class="list-disc pl-5 mb-4 space-y-1">
+                        <li>None algorithm attack (accepting unsigned tokens)</li>
+                        <li>Weak secret keys (brute-forcing HS256)</li>
+                        <li>Algorithm switching (RS256 to HS256)</li>
+                        <li>Insecure token storage (in localStorage vulnerable to XSS)</li>
+                        <li>Expiration not properly enforced</li>
+                    </ul>
+                    
+                    <h3 class="font-bold text-lg mb-3">Example Exploit</h3>
+                    <p>Changing the JWT header from:</p>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-json">{
+  "alg": "RS256",
+  "typ": "JWT"
+}</code></pre>
+                    <p class="my-2">to:</p>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-json">{
+  "alg": "none",
+  "typ": "JWT"
+}</code></pre>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Never accept tokens with "none" algorithm</li>
+                        <li>Use strong keys for HMAC</li>
+                        <li>Validate signature properly</li>
+                        <li>Set reasonable expiration times</li>
+                        <li>Store tokens securely (HttpOnly cookies)</li>
+                    </ul>
+                `,
+                tools: ["jwt_tool", "Burp Suite", "Postman"]
+            },
+            {
+                id: 5,
+                title: "File Upload Vulnerabilities",
+                description: "Bypass file upload restrictions to execute malicious code on the server.",
+                category: "file",
+                difficulty: "advanced",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">Common Exploitation Techniques</h3>
+                    <ul class="list-disc pl-5 mb-4 space-y-1">
+                        <li>Bypass extension filters (e.g., .php5, .phtml)</li>
+                        <li>Double extensions (e.g., .jpg.php)</li>
+                        <li>Null byte injection (e.g., shell.php%00.jpg)</li>
+                        <li>Magic byte obfuscation</li>
+                        <li>Upload .htaccess to modify server behavior</li>
+                    </ul>
+                    
+                    <h3 class="font-bold text-lg mb-3">Example PHP Shell</h3>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-php">&lt;?php system($_GET['cmd']); ?&gt;</code></pre>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Whitelist allowed file extensions</li>
+                        <li>Scan for magic bytes</li>
+                        <li>Store files outside web root</li>
+                        <li>Regenerate file names</li>
+                        <li>Set proper permissions</li>
+                        <li>Use virus scanners</li>
+                    </ul>
+                `,
+                tools: ["WebShell", "Burp Suite", "ExifTool"]
+            },
+            {
+                id: 6,
+                title: "HTTP Request Smuggling",
+                description: "Manipulate HTTP requests to bypass security controls or poison caches.",
+                category: "misc",
+                difficulty: "advanced",
+                content: `
+                    <h3 class="font-bold text-lg mb-3">Types of Request Smuggling</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-red-50 p-3 rounded border border-red-100">
+                            <h4 class="font-bold text-red-800">CL.TE</h4>
+                            <p class="text-sm">Front-end uses Content-Length, back-end uses Transfer-Encoding.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-3 rounded border border-yellow-100">
+                            <h4 class="font-bold text-yellow-800">TE.CL</h4>
+                            <p class="text-sm">Front-end uses Transfer-Encoding, back-end uses Content-Length.</p>
+                        </div>
+                    </div>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Example CL.TE Attack</h3>
+                    <pre class="bg-gray-100 p-3 rounded-md overflow-x-auto"><code class="language-http">POST / HTTP/1.1
+Host: vulnerable.com
+Content-Length: 13
+Transfer-Encoding: chunked
+
+0
+
+GET /admin HTTP/1.1
+X-Foo: bar</code></pre>
+                    
+                    <h3 class="font-bold text-lg mt-4 mb-3">Prevention</h3>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Use HTTP/2 (harder to smuggle)</li>
+                        <li>Disable connection reuse</li>
+                        <li>Normalize requests before processing</li>
+                        <li>Use web application firewalls (WAFs)</li>
+                        <li>Ensure front-end and back-end servers agree on request parsing</li>
+                    </ul>
+                `,
+                tools: ["Burp Suite", "Oversecured detector", "Smuggler"]
+            }
+        ];
+
+        // DOM Elements
+        const knowledgeGrid = document.getElementById('knowledgeGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const modal = document.getElementById('knowledgeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalContent = document.getElementById('modalContent');
+        const modalCategory = document.getElementById('modalCategory');
+        const modalDifficulty = document.getElementById('modalDifficulty');
+        const modalTools = document.getElementById('modalTools');
+        const closeModal = document.getElementById('closeModal');
+
+        // Current filter state
+        let currentFilter = {
+            category: 'all',
+            difficulty: ['beginner', 'intermediate', 'advanced'],
+            searchTerm: ''
+        };
+
+        // Initialize the knowledge base
+        function initKnowledgeBase() {
+            renderKnowledgeCards(knowledgeBase);
+            
+            // Add event listeners
+            searchBtn.addEventListener('click', handleSearch);
+            searchInput.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter') handleSearch();
+            });
+            
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.dataset.category;
+                    currentFilter.category = category;
+                    filterKnowledge();
+                    updateActiveCategoryBtn();
+                });
+            });
+            
+            document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    updateDifficultyFilter();
+                    filterKnowledge();
+                });
+            });
+            
+            closeModal.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+        }
+
+        // Render knowledge cards
+        function renderKnowledgeCards(data) {
+            knowledgeGrid.innerHTML = '';
+            
+            data.forEach(item => {
+                const difficultyColors = {
+                    beginner: 'bg-green-100 text-green-800',
+                    intermediate: 'bg-yellow-100 text-yellow-800',
+                    advanced: 'bg-red-100 text-red-800'
+                };
+                
+                const categoryColors = {
+                    injection: 'bg-purple-100 text-purple-800',
+                    xss: 'bg-blue-100 text-blue-800',
+                    csrf: 'bg-orange-100 text-orange-800',
+                    auth: 'bg-pink-100 text-pink-800',
+                    file: 'bg-indigo-100 text-indigo-800',
+                    misc: 'bg-gray-100 text-gray-800'
+                };
+                
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg shadow-md overflow-hidden card-hover cursor-pointer';
+                card.innerHTML = `
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${categoryColors[item.category]}">${item.category.toUpperCase()}</span>
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[item.difficulty]}">${item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">${item.title}</h3>
+                        <p class="text-gray-600 mb-4">${item.description}</p>
+                        <button class="view-details-btn text-blue-600 hover:text-blue-800 font-medium" data-id="${item.id}">
+                            View Details <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                `;
+                
+                knowledgeGrid.appendChild(card);
+            });
+            
+            // Add event listeners to view details buttons
+            document.querySelectorAll('.view-details-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const id = parseInt(btn.dataset.id);
+                    openKnowledgeModal(id);
+                });
+            });
+        }
+
+        // Open knowledge modal
+        function openKnowledgeModal(id) {
+            const item = knowledgeBase.find(i => i.id === id);
+            if (!item) return;
+            
+            const difficultyColors = {
+                beginner: 'bg-green-100 text-green-800',
+                intermediate: 'bg-yellow-100 text-yellow-800',
+                advanced: 'bg-red-100 text-red-800'
+            };
+            
+            const categoryColors = {
+                injection: 'bg-purple-100 text-purple-800',
+                xss: 'bg-blue-100 text-blue-800',
+                csrf: 'bg-orange-100 text-orange-800',
+                auth: 'bg-pink-100 text-pink-800',
+                file: 'bg-indigo-100 text-indigo-800',
+                misc: 'bg-gray-100 text-gray-800'
+            };
+            
+            modalTitle.textContent = item.title;
+            modalContent.innerHTML = item.content;
+            
+            modalCategory.textContent = item.category.toUpperCase();
+            modalCategory.className = `px-3 py-1 rounded-full text-xs font-medium ${categoryColors[item.category]}`;
+            
+            modalDifficulty.textContent = item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1);
+            modalDifficulty.className = `px-3 py-1 rounded-full text-xs font-medium ${difficultyColors[item.difficulty]}`;
+            
+            // Render tools
+            modalTools.innerHTML = '';
+            item.tools.forEach(tool => {
+                const toolBadge = document.createElement('span');
+                toolBadge.className = 'bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm';
+                toolBadge.textContent = tool;
+                modalTools.appendChild(toolBadge);
+            });
+            
+            modal.classList.remove('hidden');
+        }
+
+        // Handle search
+        function handleSearch() {
+            currentFilter.searchTerm = searchInput.value.trim().toLowerCase();
+            filterKnowledge();
+        }
+
+        // Update difficulty filter
+        function updateDifficultyFilter() {
+            const difficulties = [];
+            if (document.getElementById('beginner').checked) difficulties.push('beginner');
+            if (document.getElementById('intermediate').checked) difficulties.push('intermediate');
+            if (document.getElementById('advanced').checked) difficulties.push('advanced');
+            currentFilter.difficulty = difficulties;
+        }
+
+        // Filter knowledge based on current filters
+        function filterKnowledge() {
+            let filtered = knowledgeBase;
+            
+            // Filter by category
+            if (currentFilter.category !== 'all') {
+                filtered = filtered.filter(item => item.category === currentFilter.category);
+            }
+            
+            // Filter by difficulty
+            if (currentFilter.difficulty.length > 0) {
+                filtered = filtered.filter(item => currentFilter.difficulty.includes(item.difficulty));
+            }
+            
+            // Filter by search term
+            if (currentFilter.searchTerm) {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(currentFilter.searchTerm) ||
+                    item.description.toLowerCase().includes(currentFilter.searchTerm) ||
+                    item.content.toLowerCase().includes(currentFilter.searchTerm)
+                );
+            }
+            
+            renderKnowledgeCards(filtered);
+            highlightSearchTerms();
+        }
+
+        // Highlight search terms in the content
+        function highlightSearchTerms() {
+            if (!currentFilter.searchTerm) return;
+            
+            const cards = document.querySelectorAll('.bg-white'); // Knowledge cards
+            
+            cards.forEach(card => {
+                const title = card.querySelector('h3');
+                const description = card.querySelector('p');
+                
+                [title, description].forEach(element => {
+                    const text = element.textContent;
+                    const regex = new RegExp(currentFilter.searchTerm, 'gi');
+                    const highlighted = text.replace(regex, match => `<span class="search-highlight">${match}</span>`);
+                    
+                    // Only update if there's actually a match to prevent infinite loops
+                    if (highlighted !== text) {
+                        element.innerHTML = highlighted;
+                    }
+                });
+            });
+        }
+
+        // Update active category button
+        function updateActiveCategoryBtn() {
+            categoryBtns.forEach(btn => {
+                if (btn.dataset.category === currentFilter.category) {
+                    btn.classList.add('bg-blue-100', 'text-blue-800');
+                    btn.classList.remove('hover:bg-blue-50', 'hover:text-blue-600');
+                } else {
+                    btn.classList.remove('bg-blue-100', 'text-blue-800');
+                    btn.classList.add('hover:bg-blue-50', 'hover:text-blue-600');
+                }
+            });
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', initKnowledgeBase);
+    </script>
+</body>
+</html>
